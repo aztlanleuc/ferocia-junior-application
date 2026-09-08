@@ -1,55 +1,4 @@
-class APIInterface {
-    static BASE_API_URL = "http://localhost:3000";
-    static TAX_API_PATH = "/api/tax";
-    static HEM_API_PATH = "/api/hem";
-
-    static REQUEST_OPTIONS = {
-        method: "GET",
-        headers: {
-            Authorization: "Bearer pat_abcdefghijklmnopqrstuvwxyz0123456789",
-        },
-    };
-
-    static async getTax(income) {
-        const requestUrl =
-            APIInterface.BASE_API_URL +
-            APIInterface.TAX_API_PATH +
-            "?income=" +
-            income;
-
-        let response;
-
-        response = await fetch(requestUrl, APIInterface.REQUEST_OPTIONS);
-        const body = await response.json();
-
-        if (!response.ok) {
-            throw new Error(body.message);
-        }
-
-        return body.tax;
-    }
-
-    static async getHEM(income, dependents) {
-        const requestUrl =
-            APIInterface.BASE_API_URL +
-            APIInterface.HEM_API_PATH +
-            "?income=" +
-            income +
-            "&dependents=" +
-            dependents;
-
-        let response;
-
-        response = await fetch(requestUrl, APIInterface.REQUEST_OPTIONS);
-        const body = await response.json();
-
-        if (!response.ok) {
-            throw new Error(body.message);
-        }
-
-        return body.hem;
-    }
-}
+const APIInterface = require("./apiInterface.js");
 
 class BorrowingCalculator {
     static LOAN_TERM_MONTHS = 360; // 30 Years
@@ -102,57 +51,6 @@ class BorrowingCalculator {
             monthlyRepayment: Number(maxMonthlyRepayment.toFixed(2)),
         };
     }
-}
-
-const calculator = new BorrowingCalculator();
-
-function runConsoleMode() {
-    const readline = require("readline");
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    });
-
-    console.log("Mortgage Borrowing Power Calculator");
-    console.log("===================================");
-
-    rl.question("Gross Annual Income: $", (income) => {
-        rl.question("Number of Dependents: ", (dependents) => {
-            rl.question("Declared Monthly Expenses: $", (expenses) => {
-                rl.question(
-                    "Total Credit Card Limits: $",
-                    async (creditLimits) => {
-                        // Banks assess loans using base rate + buffer for safety
-                        const assessmentRate =
-                            BorrowingCalculator.INTEREST_RATE +
-                            BorrowingCalculator.ASSESSMENT_RATE_BUFFER;
-
-                        const result = await calculator.calculateBorrowingPower(
-                            parseFloat(income),
-                            parseInt(dependents),
-                            parseFloat(expenses),
-                            parseFloat(creditLimits),
-                            assessmentRate,
-                        );
-
-                        console.log("\n--- Calculation Summary ---");
-                        console.log(
-                            `Maximum Borrowing Power at ${BorrowingCalculator.INTEREST_RATE}%: $${result.maxLoanAmount.toLocaleString()}`,
-                        );
-                        console.log(
-                            `Assumed Monthly Mortgage Repayment: $${result.monthlyRepayment.toLocaleString()} over 30 years`,
-                        );
-
-                        rl.close();
-                    },
-                );
-            });
-        });
-    });
-}
-
-if (require.main === module) {
-    runConsoleMode();
 }
 
 module.exports = BorrowingCalculator;
