@@ -19,8 +19,12 @@ class APIInterface {
 
         let response;
 
-        response = await fetch(requestUrl, APIInterface.REQUEST_OPTIONS); // TODO: error handling
+        response = await fetch(requestUrl, APIInterface.REQUEST_OPTIONS);
         const body = await response.json();
+
+        if (!response.ok) {
+            throw new Error(body.message);
+        }
 
         return body.tax;
     }
@@ -36,8 +40,12 @@ class APIInterface {
 
         let response;
 
-        response = await fetch(requestUrl, APIInterface.REQUEST_OPTIONS); // TODO: error handling
+        response = await fetch(requestUrl, APIInterface.REQUEST_OPTIONS);
         const body = await response.json();
+
+        if (!response.ok) {
+            throw new Error(body.message);
+        }
 
         return body.hem;
     }
@@ -146,3 +154,5 @@ function runConsoleMode() {
 if (require.main === module) {
     runConsoleMode();
 }
+
+module.exports = BorrowingCalculator;
