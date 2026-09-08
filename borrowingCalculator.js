@@ -14,29 +14,50 @@ const LOAN_TERM_MONTHS = 360; // 30 Years
 const INTEREST_RATE = 7.0; // 7.0% baseline interest rate
 const ASSESSMENT_RATE_BUFFER = 3.0; // 3.0% buffer added to interest rates
 
-// Legacy placeholder functions to replace with API calls
-function getTax(income) {
-    // REPLACE THIS
-    // Write your TAX API call code here.
-    return Math.round(income * 0.25);
+const BASE_API_URL = 'http://localhost:3000';
+const TAX_API_PATH = '/api/tax';
+const HEM_API_PATH = '/api/hem';
+
+const REQUEST_OPTIONS = {
+    'method': 'GET',
+    'headers': {
+        'Authorization': 'Bearer pat_abcdefghijklmnopqrstuvwxyz0123456789'
+    }
+} 
+
+async function getTax(income) {
+    const requestUrl = BASE_API_URL + TAX_API_PATH + '?income=' + income;
+
+    let response;
+
+    response = await fetch(requestUrl, REQUEST_OPTIONS); // TODO: error handling
+    body = await response.json();
+
+    return body.tax;
+
 }
 
-function getHEM(income, dependents) {
-    // REPLACE THIS
-    // Write your HEM API call code here.
-    return 2000 + (dependents * 400);
+async function getHEM(income, dependents) {
+    const requestUrl = BASE_API_URL + HEM_API_PATH + '?income=' + income + '&dependents=' + dependents;
+
+    let response;
+
+    response = await fetch(requestUrl, REQUEST_OPTIONS); // TODO: error handling
+    body = await response.json();
+
+    return body.hem;
 }
 
 /**
  * Calculates the total borrowing power amount and the monthly repayment configuration
  */
-function calculateBorrowingPower(income, dependents, expenses, creditLimits, annualAssessmentRate) {
+async function calculateBorrowingPower(income, dependents, expenses, creditLimits, annualAssessmentRate) {
     // 1. Calculate Net Monthly Income after tax deductions
-    const annualTax = getTax(income);
+    const annualTax = await getTax(income);
     const netMonthlyIncome = (income - annualTax) / 12;
 
     // 2. Determine living expenses (User declared expenses vs HEM baseline, whichever is higher)
-    const baselineHEM = getHEM(income, dependents);
+    const baselineHEM = await getHEM(income, dependents);
     const totalLivingExpenses = Math.max(expenses, baselineHEM);
 
     // 3. Calculate credit card liability (~3% of total limits)
@@ -73,12 +94,12 @@ function runConsoleMode() {
     rl.question("Gross Annual Income: $", (income) => {
         rl.question("Number of Dependents: ", (dependents) => {
             rl.question("Declared Monthly Expenses: $", (expenses) => {
-                rl.question("Total Credit Card Limits: $", (creditLimits) => {
+                rl.question("Total Credit Card Limits: $", async (creditLimits) => {
                     
                     // Banks assess loans using base rate + buffer for safety
                     const assessmentRate = INTEREST_RATE + ASSESSMENT_RATE_BUFFER;
 
-                    const result = calculateBorrowingPower(
+                    const result = await calculateBorrowingPower(
                         parseFloat(income),
                         parseInt(dependents),
                         parseFloat(expenses),
