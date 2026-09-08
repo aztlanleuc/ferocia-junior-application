@@ -1,41 +1,23 @@
-# Borrowing Power Calculator
+# Assumptions I made
 
-Hello and thanks so much for taking the time to do the Ferocia Junior Engineering Code Exercise.
+## API 
+I assumed that the API would maintain the same paths for endpoints, and that the response returned would always be a valid HTTP response with a consistently structured body.
 
-This borrowing power calculator written in Javascript was started by one of our juniors, Gen (her full name is “Gen A. Eye”), but she she went on leave before she could finish it…
+## Correctness
+I assumed that Gen's mathematics was correct. I am aware that the original code somewhat simplified the provided calculator and therefore did not necessarily produce identical values. I also have effectively no background knowledge as to how borrowing power should be calculated, thus leaving me to feel I had no corrections to the mathematics of the `calculateBorrowingPower` function, beyond checking the code matched the behaviour explained in the comments.
 
-We need you to progress the code in her absence. Once you’ve submitted your work and we’ve reviewed it, you’ll sit down and explain the code to Gens team members (our interviewers) in a pairing session.
+# Further work I would have liked to do
 
-Keep in mind that we’ll expect you to be able to explain and expand on the code you submit.
+## Correctness tests
+As discussed above, I knew this calculator was simplified and would not necessarily match the outputs of the proper online calculator, and therefore did not know exactly what outputs should be expected. I therefore settled for writing some simple correctness tests, but would have liked to write detailed ones testing a range of financial circumstances.
 
-If you haven’t done much Javascript before don’t worry. We’ll take your experience into account, just give it your best shot. 
+## Use TypeScript
+In my first attempt to break the classes into modules, I also used TypeScript, as I prefer it to plain JS for a variety of reasons. However, this presented issues as some of the existing functionality relied on CommonJS tools such as require, which is not compatible with ES6 imports, required by TypeScript. I tried to find alternatives but was unable to reconcile the two methods, and therefore went with only using CommonJS style modules.
 
-You can see our online borrowing power calculator (Gens project is simplified so dont expect the number to match perfectly) to see how it work (https://www.bendigobank.com.au/personal/loans/calculators/borrowing-power/).
+## More specific error handling and testing
+The test suite is currently extremely non-specific in its error testing - it just checks that the Promise rejects. It would be far more rigorous to instead confirm the specific error raised is the one specified. I was unable to determine how to achieve this in the time allowed, as I am unfamiliar with testing in JS, but I will be looking into this more.
 
-## Please try to complete the following:
-
-### Replace the two placeholder functions
-The code needs to calculate tax on income and a HEM (Household Expense Measure) value.
-Currently this is performed by placeholder code in the following functions:
-    getTax(income)
-    getHEM(income, dependents)
-You will need to replace the code in both with API calls.
-We have provided a server.js which can you run locally to expose the following 2 development endpoints:
-    http://localhost:3000/api/tax?income=[income]
-    http://localhost:3000/api/hem?income=[income]&dependents=[dependents]
-Both return JSON and require an authentication header with a valid PAT (Personal Access Token), see server.md for full documentation including the development PAT.
-
-### Make it manageable
-Gen planned to pull all the calculator functions into a class so she could extend it later, but we’ll leave it up to you to choose the approach (a well-formed class, an orchestrator function, a factory/closure pattern, or whatever)
-
-### Test coverage
-Of course we’ll need the test suite to pass and have full coverage.
-
-
-
-## Rules:
-
-Use whatever tools and resources help you get the job done. That includes AI, documentation, Stack Overflow, or anything else. What matters is that you understand every line you submit. In the follow-up pairing session, we'll ask you to walk us through your code, explain your decisions, and make changes on the fly - without an AI in Agent mode. If you can't do that confidently, it will count against you. The goal isn't to catch you out, it's to understand how you think.
+# Running this respository
 
 ## Setup
 
