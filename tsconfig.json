@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "moduleDetection": "force",
+        "types": [
+            "node"
+        ],
+        "strict": true
+    },
+}
